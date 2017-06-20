@@ -1,6 +1,6 @@
 # Introduction
 
-This repo contains samples for calling the power Power BI REST APIs using PowerShell. Each PowerShell file is self-documenting. 
+This repo contains samples for calling the Power BI REST APIs using PowerShell. Each PowerShell script is self-documenting.
 
 # Contributing
 
