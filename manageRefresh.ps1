@@ -3,6 +3,13 @@
 # For full documentation on the REST APIs, see:
 # https://msdn.microsoft.com/en-us/library/mt203551.aspx 
 
+# Instructions:
+# 0. Install PowerShell
+# 1. Set up a dataset for refresh in the Power BI service - make sure that the dataset can be 
+# updated successfully
+# 2. Fill in the parameters below
+# 3. Run the PowerShell script
+
 # Parameters - fill these in before running the script!
 # =====================================================
 
