@@ -24,12 +24,13 @@ $datasetID = " FILL ME IN " # the ID of the dataset that hosts the dataset
 # AAD Client ID
 # To get this, go to the following page and follow the steps to provision an app
 # https://dev.powerbi.com/apps
-
 # To get the sample to work, ensure that you have the following fields:
 # App Type: Native app
 # Redirect URL: urn:ietf:wg:oauth:2.0:oob
 #  Level of access: all dataset APIs
 $clientId = " FILL ME IN " 
+
+# End Parameters =======================================
 
 # Calls the Active Directory Authentication Library (ADAL) to authenticate against AAD
 function GetAuthToken
