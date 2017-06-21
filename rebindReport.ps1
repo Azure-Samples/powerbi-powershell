@@ -1,25 +1,35 @@
-# This sample script calls the Power BI API to progammtically trigger a refresh for the dataset
-# It then calls the Power BI API to progammatically to get the refresh history for that dataset
-# For full documentation on the REST APIs, see:
-# https://msdn.microsoft.com/en-us/library/mt203551.aspx 
+# This sample script calls the Power BI API to progammatically clone a SOURCE report to a 
+# TARGET report in the Power BI service. The clone can either be based off of the same 
+# dataset or a new dataset
+
+# For documentation, please see:
+# https://msdn.microsoft.com/en-us/library/mt784674.aspx
 
 # Instructions:
-# 0. Install PowerShell
-# 1. Set up a dataset for refresh in the Power BI service - make sure that the dataset can be 
-# updated successfully
+# 1. Install PowerShell
 # 2. Fill in the parameters below
 # 3. Run the PowerShell script
 
 # Parameters - fill these in before running the script!
 # =====================================================
 
+# SOURCE report info
+# An easy way to get this is to navigate to the report in the Power BI service
+# The URL will contain the group and report IDs with the following format:
+# app.powerbi.com/groups/{groupID}/report/{reportID} 
+
+$sourceReportGroupId = " FILL ME IN "    # the ID of the group (workspace) that hosts the source report. Use "me" if this is your My Workspace
+$sourceReportId = " FILL ME IN "         # the ID of the source report
+
+# TARGET report info
 # An easy way to get group and dataset ID is to go to dataset settings and click on the dataset
 # that you'd like to refresh. Once you do, the URL in the address bar will show the group ID and 
 # dataset ID, in the format: 
 # app.powerbi.com/groups/{groupID}/settings/datasets/{datasetID} 
 
-$groupID = " FILL ME IN " # the ID of the group that hosts the dataset. Use "me" if this is your My Workspace
-$datasetID = " FILL ME IN " # the ID of the dataset that hosts the dataset
+$targetReportName = " FILL ME IN "       # what you'd like to name the target report
+$targetGroupId = " FILL ME IN "          # the ID of the group (workspace) that you'd like to move the report to. Leave this blank if you'd like to clone to the same workspace. Use "me" if this is your My Workspace
+$targetDatasetId = " FILL ME IN "        # the ID of the dataset that you'd like to rebind the target report to. Leave this blank to have the target report use the same dataset
 
 # AAD Client ID
 # To get this, go to the following page and follow the steps to provision an app
@@ -66,17 +76,22 @@ $authHeader = @{
 }
 
 # properly format groups path
-$groupsPath = ""
-if ($groupID -eq "me") {
-    $groupsPath = "myorg"
+$sourceGroupsPath = ""
+if ($sourceReportGroupId -eq "me") {
+    $sourceGroupsPath = "myorg"
 } else {
-    $groupsPath = "myorg/groups/$groupID"
+    $sourceGroupsPath = "myorg/groups/$sourceReportGroupId"
 }
 
-# Refresh the dataset
-$uri = "https://api.powerbi.com/v1.0/$groupsPath/datasets/$datasetID/refreshes"
-Invoke-RestMethod -Uri $uri –Headers $authHeader –Method POST –Verbose
+# POST body 
+$postParams = @{
+    "Name" = "$targetReportName"
+    "TargetWorkspaceId" = "$targetGroupId"
+    "TargetModelId" = "$targetDatasetId"
+}
 
-# Check the refresh history
-$uri = "https://api.powerbi.com/v1.0/$groupsPath/datasets/$datasetID/refreshes"
-Invoke-RestMethod -Uri $uri –Headers $authHeader –Method GET –Verbose
+$jsonPostBody = $postParams | ConvertTo-JSON
+
+# Make the request to clone the report
+$uri = "https://api.powerbi.com/v1.0/$sourceGroupsPath/reports/$sourceReportId/clone"
+Invoke-RestMethod -Uri $uri –Headers $authHeader –Method POST -Body $jsonPostBody –Verbose
