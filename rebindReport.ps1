@@ -6,7 +6,7 @@
 # https://msdn.microsoft.com/en-us/library/mt784674.aspx
 
 # Instructions:
-# 1. Install PowerShell
+# 1. Install PowerShell (https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the Azure PowerShell cmdlets (https://aka.ms/webpi-azps)
 # 2. Fill in the parameters below
 # 3. Run the PowerShell script
 
