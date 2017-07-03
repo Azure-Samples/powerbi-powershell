@@ -57,7 +57,7 @@ function GetAuthToken
  
        $resourceAppIdURI = "https://analysis.windows.net/powerbi/api"
  
-       $authority = "https://login.windows.net/common/oauth2/authorize";
+       $authority = "https://login.microsoftonline.com/common/oauth2/authorize";
  
        $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
  
