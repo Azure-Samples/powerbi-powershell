@@ -1,9 +1,27 @@
-﻿# ======================================================
+﻿# This sample script calls the Power BI API to programmatically duplicate the workspace and all
+# its dashboards, reports and datasets.
+
+# Instructions:
+# 1. Install PowerShell (https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the Azure PowerShell cmdlets (https://aka.ms/webpi-azps)
+# 2. Run PowerShell as an administrator
+# 3. Follow the instructions below to fill in the client ID
+# 4. > Set-ExecutionPolicy Unrestricted
+# 5. Change PowerShell directory to where this script is saved
+# 6. > ./copyworkspace.ps1
+
+# Parameters - fill these in before running the script!
+# ======================================================
+
+# AAD Client ID
+# To get this, go to the following page and follow the steps to provision an app
+# https://dev.powerbi.com/apps
+# To get the sample to work, ensure that you have the following fields:
+# App Type: Native app
+# App URL: <enter whatever>
+# Redirect URL: urn:ietf:wg:oauth:2.0:oob
+#  Level of access: check all boxes
 
 $clientId = "d3590ed6-52b3-4102-aeff-aad2292ab01c" 
-$temp_path_root = "$PSScriptRoot\pbi-copy-workspace-temp-storage"
-
-Add-Type -AssemblyName System.Net.Http
 
 # End Parameters =======================================
 
@@ -27,7 +45,7 @@ function GetAuthToken
  
        $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
  
-       $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+       $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Always")
  
        return $authResult
 }
@@ -43,6 +61,9 @@ function get_groups_path($group_id) {
 # Get the auth token from AAD
 $token = GetAuthToken
 
+Add-Type -AssemblyName System.Net.Http
+$temp_path_root = "$PSScriptRoot\pbi-copy-workspace-temp-storage"
+
 # Building Rest API header with authorization tokeno
 $auth_header = @{
    'Content-Type'='application/json'
@@ -53,7 +74,7 @@ $auth_header = @{
 $uri = "https://api.powerbi.com/v1.0/myorg/groups/"
 $all_groups = (Invoke-RestMethod -Uri $uri –Headers $auth_header –Method GET).value
 
-# Keep asking user for source workspace until we get a valid one
+# Ask for the source workspace name
 $source_group_ID = ""
 while (!$source_group_ID) {
     $source_group_name = Read-Host -Prompt "Enter the name of the workspace you'd like to copy from"
@@ -80,7 +101,7 @@ while (!$source_group_ID) {
     } 
 }
 
-# Keep asking the user for a valid target workspace name until we get a valid one
+# Ask for the target workspace name
 $target_group_ID = "" 
 while (!$target_group_id) {
     try {
@@ -141,8 +162,6 @@ Foreach($report in $reports) {
     try {
         Invoke-RestMethod -Uri $uri –Headers $auth_header –Method GET -OutFile "$temp_path"
     } catch {
-        # Dig into the exception to get the Response details.
-        # Note that value__ is not a typo.
         Write-Host "= This report and dataset cannot be copied, skipping..."
         Write-Host "= Error: StatusCode:" $_.Exception.Response.StatusCode.value__ 
         Write-Host "= StatusDescription:" $_.Exception.Response.StatusDescription
@@ -153,6 +172,7 @@ Foreach($report in $reports) {
         "== Importing $report_name to target workspace"
         $uri = "https://api.powerbi.com/v1.0/$target_group_path/imports/?datasetDisplayName=$report_name.pbix&nameConflict=Abort"
 
+        # Here we switch to HttpClient class to help POST the form data for importing PBIX
         $httpClient = New-Object System.Net.Http.Httpclient $httpClientHandler
         $httpClient.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", $token.AccessToken);
         $packageFileStream = New-Object System.IO.FileStream @($temp_path, [System.IO.FileMode]::Open)
@@ -170,10 +190,10 @@ Foreach($report in $reports) {
 	    $response = $httpClient.PostAsync($Uri, $content).Result
  
 	    if (!$response.IsSuccessStatusCode) {
-				$responseBody = $response.Content.ReadAsStringAsync().Result
-                "= This report cannot be imported to target workspace. Skipping..."
-				$errorMessage = "Status code {0}. Reason {1}. Server reported the following message: {2}." -f $response.StatusCode, $response.ReasonPhrase, $responseBody
-				throw [System.Net.Http.HttpRequestException] $errorMessage
+		    $responseBody = $response.Content.ReadAsStringAsync().Result
+            "= This report cannot be imported to target workspace. Skipping..."
+			$errorMessage = "Status code {0}. Reason {1}. Server reported the following message: {2}." -f $response.StatusCode, $response.ReasonPhrase, $responseBody
+			throw [System.Net.Http.HttpRequestException] $errorMessage
 		} 
         
         # save the import IDs
