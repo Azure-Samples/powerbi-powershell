@@ -72,7 +72,7 @@ $auth_header = @{
    'Authorization'=$token.CreateAuthorizationHeader()
 }
 
-# PART 2: Prompt for user input
+# Prompt for user input
 # ==================================================================
 # Get the list of groups that the user is a member of
 $uri = "https://api.powerbi.com/v1.0/myorg/groups/"
