@@ -2,9 +2,11 @@
 
 This repo contains samples for calling the Power BI REST APIs using PowerShell. Each PowerShell script is self-documenting.
 
-* [manageRefresh.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/manageRefresh.ps1) - progammatically trigger scheduled refresh and check refresh history
+* [manageRefresh.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/manageRefresh.ps1) - trigger scheduled refresh and check refresh history
 
-* [rebindReport.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/rebindReport.ps1) - programmatically clone a report in the Power BI service and rebind it to a different dataset
+* [rebindReport.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/rebindReport.ps1) - clone a report in the Power BI service and rebind it to a different dataset
+
+* [copyWorkspace.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/copyWorkspace.ps1) - duplicate a workpsace in the Power BI service 
 
 
 # Prerequisites
