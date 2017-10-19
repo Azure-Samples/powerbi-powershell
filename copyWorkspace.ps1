@@ -21,7 +21,7 @@
 # Redirect URL: urn:ietf:wg:oauth:2.0:oob
 #  Level of access: check all boxes
 
-$clientId = "d3590ed6-52b3-4102-aeff-aad2292ab01c" 
+$clientId = " FILL ME IN " 
 
 # End Parameters =======================================
 
