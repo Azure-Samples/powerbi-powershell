@@ -1,13 +1,15 @@
 ﻿# This sample script calls the Power BI API to programmatically duplicate the workspace and all
 # its dashboards, reports and datasets.
 
+# For more information, see the accompanying blog post:
+# https://powerbi.microsoft.com/en-us/blog/duplicate-workspaces-using-the-power-bi-rest-apis-a-step-by-step-tutorial/
+
 # Instructions:
 # 1. Install PowerShell (https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the Azure PowerShell cmdlets (https://aka.ms/webpi-azps)
 # 2. Run PowerShell as an administrator
 # 3. Follow the instructions below to fill in the client ID
-# 4. > Set-ExecutionPolicy Unrestricted
-# 5. Change PowerShell directory to where this script is saved
-# 6. > ./copyworkspace.ps1
+# 4. Change PowerShell directory to where this script is saved
+# 5. > ./copyworkspace.ps1
 
 # Parameters - fill these in before running the script!
 # ======================================================
@@ -17,7 +19,6 @@
 # https://dev.powerbi.com/apps
 # To get the sample to work, ensure that you have the following fields:
 # App Type: Native app
-# App URL: <enter whatever>
 # Redirect URL: urn:ietf:wg:oauth:2.0:oob
 #  Level of access: check all boxes
 
@@ -45,7 +46,7 @@ function GetAuthToken
  
        $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
  
-       $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Always")
+       $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
  
        return $authResult
 }
@@ -58,18 +59,21 @@ function get_groups_path($group_id) {
     }
 }
 
-# Get the auth token from AAD
+# PART 1: Authentication
+# ==================================================================
 $token = GetAuthToken
 
 Add-Type -AssemblyName System.Net.Http
 $temp_path_root = "$PSScriptRoot\pbi-copy-workspace-temp-storage"
 
-# Building Rest API header with authorization tokeno
+# Building Rest API header with authorization token
 $auth_header = @{
    'Content-Type'='application/json'
    'Authorization'=$token.CreateAuthorizationHeader()
 }
 
+# PART 2: Prompt for user input
+# ==================================================================
 # Get the list of groups that the user is a member of
 $uri = "https://api.powerbi.com/v1.0/myorg/groups/"
 $all_groups = (Invoke-RestMethod -Uri $uri –Headers $auth_header –Method GET).value
@@ -119,6 +123,8 @@ while (!$target_group_id) {
     }
 }
 
+# PART 3: Copying reports and datasets using Export/Import PBIX APIs
+# ==================================================================
 $report_ID_mapping = @{}      # mapping of old report ID to new report ID
 $dataset_ID_mapping = @{}     # mapping of old model ID to new model ID
 $failure_log = @()  
@@ -162,9 +168,7 @@ Foreach($report in $reports) {
     try {
         Invoke-RestMethod -Uri $uri –Headers $auth_header –Method GET -OutFile "$temp_path"
     } catch {
-        Write-Host "= This report and dataset cannot be copied, skipping..."
-        Write-Host "= Error: StatusCode:" $_.Exception.Response.StatusCode.value__ 
-        Write-Host "= StatusDescription:" $_.Exception.Response.StatusDescription
+        Write-Host "= This report and dataset cannot be copied, skipping. This is expected for most workspaces."
         continue
     }
      
@@ -225,7 +229,6 @@ Foreach($report in $reports) {
             
         
     } catch [Exception] {
-        # TO DO: better error handling
         Write-Host $_.Exception
 	    Write-Host "== Error: failed to import PBIX"
         Write-Host "= HTTP Status Code:" $_.Exception.Response.StatusCode.value__ 
@@ -234,8 +237,10 @@ Foreach($report in $reports) {
     }
 }
 
+
+# PART 4: Clone the remainder of the reports
+# ==================================================================
 "=== Cloning reports" 
-# == Clone the remaining reports...
 Foreach($report in $reports) {
     $report_name = $report.name
     $report_id = $report.id
@@ -253,8 +258,10 @@ Foreach($report in $reports) {
     }
 }
 
+
+# PART 5: Copy dashboards
+# ==================================================================
 "=== Cloning dashboards" 
-# == Clone the dashboards
 # get all dashboards in a workspace
 $uri = "https://api.powerbi.com/v1.0/$source_group_path/dashboards/"
 $dashboards = (Invoke-RestMethod -Uri $uri –Headers $auth_header –Method GET).value
