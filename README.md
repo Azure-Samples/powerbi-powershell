@@ -1,4 +1,6 @@
-# Introduction
+# Microsoft Power BI PowerShell samples
+
+## Introduction
 
 This repo contains samples for calling the Power BI REST APIs using PowerShell. Each PowerShell script is self-documenting.
 
@@ -8,11 +10,14 @@ This repo contains samples for calling the Power BI REST APIs using PowerShell. 
 
 * [copyWorkspace.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/copyWorkspace.ps1) - duplicate a workpsace in the Power BI service 
 
+* [bindtogateway.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/bindtogateway.ps1) - Binds a dataset to a new gateway.
 
-# Prerequisites
+* [takeover-dataset.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/takeover-dataset.ps1) - Takes ownership of a dataset to your account.
 
-To run the scripts in this repo, please install [PowerShell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the [Azure PowerShell cmdlets](https://aka.ms/webpi-azps)
+## Prerequisites
 
-# Contributing
+To run the scripts in this repo, please install [PowerShell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the [Azure Resource Manager PowerShell cmdlets](https://www.powershellgallery.com/packages/AzureRM/).
+
+## Contributing
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
