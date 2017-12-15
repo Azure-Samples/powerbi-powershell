@@ -6,9 +6,12 @@
 # https://msdn.microsoft.com/en-us/library/mt784674.aspx
 
 # Instructions:
-# 1. Install PowerShell (https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the Azure PowerShell cmdlets (https://aka.ms/webpi-azps)
-# 2. Fill in the parameters below
-# 3. Run the PowerShell script
+# 1. Install PowerShell (https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 
+#    and the Azure PowerShell cmdlets (Install-Module AzureRM)
+# 2. Run PowerShell as an administrator
+# 3. Follow the instructions below to fill in the client ID
+# 4. Change PowerShell directory to where this script is saved
+# 5. > ./rebindReport.ps1
 
 # Parameters - fill these in before running the script!
 # =====================================================
@@ -45,25 +48,25 @@ $clientId = " FILL ME IN "
 # Calls the Active Directory Authentication Library (ADAL) to authenticate against AAD
 function GetAuthToken
 {
-       $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+    $adal = "${env:ProgramFiles}\WindowsPowerShell\Modules\AzureRM.profile\4.1.1\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+    
+    $adalforms = "${env:ProgramFiles}\WindowsPowerShell\Modules\AzureRM.profile\4.1.1\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
  
-       $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
- 
-       [System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
- 
-       [System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
- 
-       $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
- 
-       $resourceAppIdURI = "https://analysis.windows.net/powerbi/api"
- 
-       $authority = "https://login.microsoftonline.com/common/oauth2/authorize";
- 
-       $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
- 
-       $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
- 
-       return $authResult
+    [System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
+
+    [System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
+
+    $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+
+    $resourceAppIdURI = "https://analysis.windows.net/powerbi/api"
+
+    $authority = "https://login.microsoftonline.com/common/oauth2/authorize";
+
+    $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
+
+    $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+
+    return $authResult
 }
 
 # Get the auth token from AAD
