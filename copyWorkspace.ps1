@@ -31,13 +31,9 @@ $clientId = " FILL ME IN "
 # Calls the Active Directory Authentication Library (ADAL) to authenticate against AAD
 function GetAuthToken
 {
-    $adal = "${env:ProgramFiles}\WindowsPowerShell\Modules\AzureRM.profile\4.1.1\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-    
-    $adalforms = "${env:ProgramFiles}\WindowsPowerShell\Modules\AzureRM.profile\4.1.1\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
- 
-    [System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
-
-    [System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
+    if(-not (Get-Module AzureRm.Profile)) {
+      Import-Module AzureRm.Profile
+    }
 
     $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
 
