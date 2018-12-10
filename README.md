@@ -16,7 +16,7 @@ This repo contains samples for calling the Power BI REST APIs using PowerShell. 
 
 * [Zero-Downtime-Capacity-Scale.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/Zero-Downtime-Capacity-Scale.ps1) - scale Power BI Embedded capacity resource, up or down, with no downtime (i.e. embedded content is available during the scaling process).
 
-* [uploadapplication.ps1] - Upload local Power BI Application to the specified Workspace
+* [uploadapplication.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/uploadapplication.ps1) - Upload local Power BI Application to the specified Workspace
 
 ## Prerequisites
 
