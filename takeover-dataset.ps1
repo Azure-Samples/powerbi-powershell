@@ -44,7 +44,11 @@ function GetAuthToken
 
     $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
 
-    $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+    $authTask = $authContext.AcquireTokenAsync($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+    
+    $authTask.Wait()
+    
+    $authResult = $authTask.Result
 
     return $authResult
 }
