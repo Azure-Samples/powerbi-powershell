@@ -46,7 +46,11 @@ function GetAuthToken
 
     $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
 
-    $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+    $promptBehav = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
+    
+    $platParam = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters" -ArgumentList $promptBehav
+
+    $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, $platParam)
 
     return $authResult
 }
