@@ -1,4 +1,4 @@
-#This sample script calls the Power BI API and ARM REST API to programmatically scale capacity resource with no downtime (i.e. embedded content is available during the scaling process).
+# This sample script calls the Power BI API and ARM REST API to programmatically scale capacity resource with no downtime (i.e. embedded content is available during the scaling process).
 # It also provides an option to reassign workspaces from one capacity resource to another.
 # The procedure creates a temporary capacity resource and reassigns the workspaces to it during the scaling process.
 # Once the procedure is completed, the workspaces are assigned back to the original capacity resource and the temporary capacity resource is deleted.
@@ -93,7 +93,6 @@ Param(
 
 # =====================================================
 # $clientId = "FILL ME IN"
-$clientId = "3101a374-7392-4667-b202-76383a02a872"
 # =====================================================
 
 
@@ -173,6 +172,24 @@ FUNCTION AssignWorkspacesToCapacity($source_capacity_objectid, $target_capacity_
       $assignToCapacityUri = $apiUri + "groups/" + $_.id + "/AssignToCapacity"
       $assignToCapacityBody = @{capacityId=$target_capacity_objectid} | ConvertTo-Json
       Invoke-RestMethod -Method Post -Headers $auth_header -Uri $assignToCapacityUri -Body $assignToCapacityBody -ContentType 'application/json'
+
+      # Validate workspace to capacity assignment status was completed successfully, if not then exit script
+      DO
+      {
+        $assignToCapacityStatusUri = $apiUri + "groups/" + $_.id + "/CapacityAssignmentStatus"
+        $status = Invoke-RestMethod -Method Get -Headers $auth_header -Uri $assignToCapacityStatusUri
+
+        # Exit script if workspace assignment has failed
+        IF ($status.status -eq 'AssignmentFailed')
+        {
+          $errmsg = "workspace " +  $_.id + " assignment has failed!, script will stop."
+          Break Script
+        }
+        
+        Start-Sleep -Milliseconds 200
+
+        Write-Host ">>> Assigning workspace Id:" $_.id "to capacity id:" $target_capacity_objectid "Status:" $status.status
+      } while ($status.status -ne 'CompletedSuccessfully')
     }
 
     $getCapacityGroupsUri = $apiUri + "groups?$" + "filter=capacityId eq " + "'$target_capacity_objectid'"
