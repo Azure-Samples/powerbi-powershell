@@ -16,6 +16,7 @@
 
 $groupId = " FILL ME IN "           # the ID of the group (workspace) that hosts the dataset.
 $datasetId = " FILL ME IN "         # the ID of dataset to rebind
+$gatewayId = " FILL ME IN "         # the ID of gateway to bind to
 
 # AAD Client ID
 # To get this, go to the following page and follow the steps to provision an app
@@ -44,7 +45,15 @@ function GetAuthToken
 
     $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
 
-    $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+    $promptBehav = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
+
+    $platParam = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters" -ArgumentList $promptBehav
+
+    $authTask = $authContext.AcquireTokenAsync($resourceAppIdURI, $clientId, $redirectUri, $platParam)
+
+    $authTask.Wait()
+
+    $authResult = $authTask.Result
 
     return $authResult
 }
@@ -67,11 +76,17 @@ if ($groupId -eq "me") {
 }
 
 # Make the request to bind to a gateway
-$uri = "https://api.powerbi.com/v1.0/$sourceGroupsPath/datasets/$datasetId/BindToGateway"
+$uri = "https://api.powerbi.com/v1.0/$sourceGroupsPath/datasets/$datasetId/Default.BindToGateway"
+
+$gatewayObject = @{
+    gatewayObjectId = $gatewayId
+}
+
+$postBodyJson = $gatewayObject | ConvertTo-Json
 
 # Try to bind to a new gateway
 try {
-    Invoke-RestMethod -Uri $uri -Headers $authHeader -Method POST -Verbose 
+    Invoke-RestMethod -Uri $uri -Headers $authHeader -Body $postBodyJson -Method POST -Verbose 
 } catch {
 
     $result = $_.Exception.Response.GetResponseStream()

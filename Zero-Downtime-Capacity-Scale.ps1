@@ -119,7 +119,15 @@ FUNCTION GetAuthToken
     }
     ELSE
     {
-        $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, 'Always')
+        $promptBehav = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Always
+
+        $platParam = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters" -ArgumentList $promptBehav
+
+        $authTask = $authContext.AcquireTokenAsync($resourceAppIdURI, $clientId, $redirectUri, $platParam)
+
+        $authTask.Wait()
+
+        $authResult = $authTask.Result
     }
 
     return $authResult
