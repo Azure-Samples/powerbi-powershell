@@ -16,26 +16,33 @@ param (
 # 3. Change PowerShell directory to where this script is saved
 # 4. > ./Add-User-All-Workspace.ps1
 
-# Authentication and Header
-Connect-PowerBIServiceAccount
-$headers = Get-PowerBIAccessToken
+try {
 
-# Defaults to Admin is access right is not specified
-if(!$AccessRight) {
-    $AccessRight = 'Admin'
-}
+    # Authentication and Header
+    Connect-PowerBIServiceAccount
+    $headers = Get-PowerBIAccessToken
 
-# If a Workspace is specified, if not all the available Workspace is taken
-if($Workspace) {
-    $Workspace = Get-PowerBIWorkspace -Scope Organization -Name $Workspace
-    $target_group_id = $Workspace.Id
-    Add-PowerBIWorkspaceUser -Scope Organization -Id $target_group_id -UserEmailAddress $UserEmail -AccessRight $AccessRight
-}
-else {
-    $Workspaces = Get-PowerBIWorkspace -Scope Organization -Filter "Type eq 'Workspace'"
-    Foreach($Workspace in $Workspaces) {
-        Write-Host $Workspace.Name
+    # Defaults to Admin is access right is not specified
+    if(!$AccessRight) {
+        $AccessRight = 'Admin'
+    }
+
+    # If a Workspace is specified, if not all the available Workspace is taken
+    if($Workspace) {
+        $Workspace = Get-PowerBIWorkspace -Scope Organization -Name $Workspace
         $target_group_id = $Workspace.Id
         Add-PowerBIWorkspaceUser -Scope Organization -Id $target_group_id -UserEmailAddress $UserEmail -AccessRight $AccessRight
     }
+    else {
+        $Workspaces = Get-PowerBIWorkspace -Scope Organization -Filter "Type eq 'Workspace'"
+        Foreach($Workspace in $Workspaces) {
+            Write-Host $Workspace.Name
+            $target_group_id = $Workspace.Id
+            Add-PowerBIWorkspaceUser -Scope Organization -Id $target_group_id -UserEmailAddress $UserEmail -AccessRight $AccessRight
+        }
+    }
+} catch { 
+    Write-Host $_.Exception
+    Write-Host Resolve-PowerBIError -Last
+    Break
 }
