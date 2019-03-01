@@ -18,9 +18,11 @@ This repo contains samples for calling the Power BI REST APIs using PowerShell. 
 
 * [uploadapplication.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/uploadapplication.ps1) - Upload local Power BI Application to the specified Workspace
 
+* [Add-User-All-Workspace.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/Add-User-All-Workspace.ps1) - Add specified user to mentioned or all the Workspace
+
 ## Prerequisites
 
-To run the scripts in this repo, please install [PowerShell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the [Azure Resource Manager PowerShell cmdlets](https://www.powershellgallery.com/packages/AzureRM/).
+To run the scripts in this repo, please install [PowerShell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell), [Azure Resource Manager PowerShell cmdlets](https://www.powershellgallery.com/packages/AzureRM/) and the [Microsoft Power BI Cmdlets](https://docs.microsoft.com/en-us/powershell/power-bi/overview) .
 
 ## Contributing
 
