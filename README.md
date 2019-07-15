@@ -1,3 +1,12 @@
+---
+languages:
+- powershell
+products:
+- power-bi
+page_type: sample
+description: "Samples for calling the Power BI REST APIs using PowerShell."
+---
+
 # Microsoft Power BI PowerShell samples
 
 ## Introduction
