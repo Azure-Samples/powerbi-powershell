@@ -25,55 +25,54 @@ $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")
 
 #region Validation of the input parameters =======================================
 
-
-    Try{
-		if ($fl -ne $null){
-			$rpExt=$fl.split(".")[-1]
-            if ($rpExt -eq "xlsx" -or $rpExt -eq "pbix"){ #confirm that the file being imported is either xlsx or pbix
-                if ($rpExt -eq "xlsx"){
-                    if ($xlsxmode -eq "connect" -or $xlsxmode -eq "import"){  #confirm if xlsx, if the mode is correct
-                         if (!(Test-Path -Path ($flpath + $fl))) { #confirm if the filpath is valid and if the file exists.
-                                Write-Host "The file cannot be accessed, please confirm the filepath is valid, the file exists and the user has permissions to access it"
-                                Break            
-                         }
-                    }else {
-                        Write-Host "The mode is invalid for xlsx import, you must choose connect or import"
-                        Break        
-                    }
+Try{
+    if ($fl -ne $null){
+        $rpExt=$fl.split(".")[-1]
+        if ($rpExt -eq "xlsx" -or $rpExt -eq "pbix"){ #confirm that the file being imported is either xlsx or pbix
+            if ($rpExt -eq "xlsx"){
+                if ($xlsxmode -eq "connect" -or $xlsxmode -eq "import"){  #confirm if xlsx, if the mode is correct
+                        if (!(Test-Path -Path ($flpath + $fl))) { #confirm if the filpath is valid and if the file exists.
+                            Write-Host "The file cannot be accessed, please confirm the filepath is valid, the file exists and the user has permissions to access it"
+                            Break            
+                        }
+                }else {
+                    Write-Host "The mode is invalid for xlsx import, you must choose connect or import"
+                    Break        
                 }
-
-                # properly format groups path
-				$groupsPath = ""
-				if ($groupID -eq "me" -or $groupID -eq $null) {
-					$groupsPath = "myorg"
-				} else {
-                    #groupid is not empty, me or null, so we need to ensure it's a valid guid
-	                [regex]$guidRegex = '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$'
-	                                
-	                if ($groupID -match $guidRegex){ 
-                        $groupsPath = "myorg/groups/$groupID"
-                    }else {
-                        Write-Host "You need to specify a valid workspace id"
-                        Break
-                                 
-					}
-				}
-                
-            }else {
-                Write-Host "The file to import must be a pbix or xlsx file"
-                Break
             }
-		}else {
-		    Write-Host "The file parameter was not set, please set the file name and extension"
-            Break
-         
-		}
-  }Catch
-        {
-            $ErrorMessage = $_.Exception.Message
-            Write-Host "An exception has occurred on the validation of the input parameters, exception details:$endLine Message:$ErrorMessage$endLine"  -ForegroundColor Red
+
+            # properly format groups path
+            $groupsPath = ""
+            if ($groupID -eq "me" -or $groupID -eq $null) {
+	            $groupsPath = "myorg"
+            } else {
+                #groupid is not empty, me or null, so we need to ensure it's a valid guid
+	            [regex]$guidRegex = '(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$'
+	                                
+	            if ($groupID -match $guidRegex){ 
+                    $groupsPath = "myorg/groups/$groupID"
+                }else {
+                    Write-Host "You need to specify a valid workspace id"
+                    Break
+                                 
+	            }
+            }
+            
+        }else {
+            Write-Host "The file to import must be a pbix or xlsx file"
             Break
         }
+	}else {
+		Write-Host "The file parameter was not set, please set the file name and extension"
+        Break
+         
+	}
+}Catch
+    {
+        $ErrorMessage = $_.Exception.Message
+        Write-Host "An exception has occurred on the validation of the input parameters, exception details:$endLine Message:$ErrorMessage$endLine"  -ForegroundColor Red
+        Break
+    }
 #endregion Validation of the input parameters
 Write-Host "Validation of the input parameters finished with success." -ForegroundColor Green 
 
