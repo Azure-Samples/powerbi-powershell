@@ -25,6 +25,8 @@ This repo contains samples for calling the Power BI REST APIs using PowerShell. 
 
 * [Zero-Downtime-Capacity-Scale.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/Zero-Downtime-Capacity-Scale.ps1) - scale Power BI Embedded capacity resource, up or down, with no downtime (i.e. embedded content is available during the scaling process).
 
+* [importApi.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/importApi.ps1) - Import a pbix or xlsx file to a workspace.
+
 ## Prerequisites
 
 To run the scripts in this repo, please install [PowerShell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) and the [Azure Resource Manager PowerShell cmdlets](https://www.powershellgallery.com/packages/AzureRM/).
