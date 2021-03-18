@@ -71,9 +71,9 @@ Param
   # [Parameter (Mandatory= $false)]
   # [String] $secret = "FILL ME IN",
   [Parameter (Mandatory= $false)]
-  [String] $CapacityName = "goldpbi",
+  [String] $CapacityName = "FILL ME IN",
   [Parameter (Mandatory= $false)]
-  [String] $CapacityResourceGroup = "iplanriorg",
+  [String] $CapacityResourceGroup = "FILL ME IN",
   [Parameter (Mandatory= $false)]
   [String] $TargetSku = "A1"
   
