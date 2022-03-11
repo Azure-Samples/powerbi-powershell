@@ -17,7 +17,7 @@ This repo contains samples for calling the Power BI REST APIs using PowerShell. 
 
 * [rebindReport.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/rebindReport.ps1) - clone a report in the Power BI service and rebind it to a different dataset
 
-* [copyWorkspace.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/copyWorkspace.ps1) - duplicate a workpsace in the Power BI service 
+* [copyWorkspace.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/copyWorkspace.ps1) - duplicate a workspace in the Power BI service 
 
 * [bindtogateway.ps1](https://github.com/Azure-Samples/powerbi-powershell/blob/master/bindtogateway.ps1) - Binds a dataset to a new gateway.
 
