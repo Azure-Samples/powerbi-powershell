@@ -23,10 +23,10 @@ $datasetId = " FILL ME IN "         # the ID of dataset to rebind
 # Login to the Power BI service with your Power BI credentials
 Login-PowerBI
 
-# Make the request to bind to a gateway
+# Make the request to take over the dataset
 $uri = "groups/$groupId/datasets/$datasetId/Default.TakeOver"
 
-# Try to bind to a new gateway
+# Try to take over the dataset
 try { 
     Invoke-PowerBIRestMethod -Url $uri -Method Post
 
